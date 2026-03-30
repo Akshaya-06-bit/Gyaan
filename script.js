@@ -1,3 +1,5 @@
+//sign up page javascript
+
 function showView(role) {
     // 1. Hide all sections
     const views = document.querySelectorAll('.dashboard-view');
