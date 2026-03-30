@@ -1,6 +1,12 @@
-import { createContext, useContext, useMemo, useState } from "react";
+﻿import { createContext, useContext, useMemo, useState } from "react";
 
 const AuthContext = createContext();
+
+const DEMO_USERS = [
+  { role: "student", email: "student@demo.com", password: "student123", name: "Student Demo" },
+  { role: "mentor", email: "mentor@demo.com", password: "mentor123", name: "Mentor Demo" },
+  { role: "ngo", email: "ngo@demo.com", password: "ngo123", name: "Admin Demo" },
+];
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -9,13 +15,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (email, password) => {
-    const demoUsers = [
-      { role: "student", email: "student@demo.com", password: "student123", name: "Student Demo" },
-      { role: "mentor", email: "mentor@demo.com", password: "mentor123", name: "Mentor Demo" },
-      { role: "ngo", email: "ngo@demo.com", password: "ngo123", name: "NGO Admin" },
-    ];
-
-    const match = demoUsers.find((u) => u.email === email && u.password === password);
+    const match = DEMO_USERS.find((u) => u.email === email && u.password === password);
     if (!match) return { ok: false, error: "Invalid credentials." };
 
     const nextUser = { email: match.email, role: match.role, name: match.name };
@@ -40,11 +40,7 @@ export const AuthProvider = ({ children }) => {
     [user]
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

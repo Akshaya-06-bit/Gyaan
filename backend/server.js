@@ -21,6 +21,7 @@ app.use("/api", require("./routes/adminAliases"));
 app.use("/api/ai-engine", require("./routes/aiEngine"));
 app.use("/api/mentor", require("./routes/mentor"));
 app.use("/api/student", require("./routes/student"));
+app.use("/api", require("./routes/assignments"));
 
 app.get("/api/health", (_, res) => res.json({ status: "ok" }));
 

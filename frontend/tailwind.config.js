@@ -3,11 +3,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: "#0a0a0a",
+        ink: "#0f5f66",
         paper: "#ffffff",
-        fog: "#f5f5f5",
-        mist: "#e6e6e6",
-        smoke: "#cfcfcf",
+        fog: "#f4fbfb",
+        mist: "#e4f2f1",
+        smoke: "#cfe7e5",
+        accent: "#5fd4ce",
+        accentSoft: "#9fe7e3",
       },
       fontFamily: {
         sans: [
@@ -24,7 +26,7 @@ module.exports = {
         ],
       },
       boxShadow: {
-        soft: "0 10px 30px -20px rgba(0,0,0,0.25)",
+        soft: "0 18px 40px -26px rgba(15,95,102,0.35)",
       },
       borderRadius: {
         "2xl": "1rem",

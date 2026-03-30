@@ -72,7 +72,7 @@ export default function Login() {
           <p className="font-semibold text-ink">Demo credentials</p>
           <p>Student: student@demo.com / student123</p>
           <p>Mentor: mentor@demo.com / mentor123</p>
-          <p>NGO: ngo@demo.com / ngo123</p>
+          <p>Admin: ngo@demo.com / ngo123</p>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import MentorSessions from "./pages/MentorSessions";
 import AiEngine from "./pages/AiEngine";
 import StudentMentor from "./pages/StudentMentor";
 import MentorStudents from "./pages/MentorStudents";
+import Assignments from "./pages/Assignments";
 
 export default function App() {
   return (
@@ -76,6 +77,14 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/student/assignments"
+              element={
+                <ProtectedRoute roles={["student"]}>
+                  <Assignments />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/mentor"
@@ -117,6 +126,14 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/mentor/assignments"
+              element={
+                <ProtectedRoute roles={["mentor"]}>
+                  <Assignments />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/ngo"
@@ -139,6 +156,14 @@ export default function App() {
               element={
                 <ProtectedRoute roles={["ngo"]}>
                   <MentorMatching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ngo/assignments"
+              element={
+                <ProtectedRoute roles={["ngo"]}>
+                  <Assignments />
                 </ProtectedRoute>
               }
             />

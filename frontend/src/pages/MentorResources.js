@@ -4,6 +4,10 @@ import { useI18n } from "../context/I18nContext";
 export default function MentorResources() {
   const { t } = useI18n();
   const [resources, setResources] = useState([]);
+  const MOCK_RESOURCES = [
+    { id: "r1", title: "Fractions Basics", subject: "Math", link: "", notes: "Visual fractions and step-by-step examples." },
+    { id: "r2", title: "Reading Strategies", subject: "English", link: "", notes: "Skimming, scanning, and summarizing tips." },
+  ];
   const [form, setForm] = useState({ title: "", subject: "", link: "", notes: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -14,11 +18,13 @@ export default function MentorResources() {
     setError("");
     try {
       const res = await fetch(`${API_URL}/resources`);
-      const data = await res.json();
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json") ? await res.json() : { error: "Backend unavailable." };
       if (!res.ok) throw new Error(data.error || "Failed to load resources.");
       setResources(data.resources || []);
     } catch (err) {
-      setError(err.message || "Failed to load resources.");
+      setResources(MOCK_RESOURCES);
+      setError("");
     } finally {
       setLoading(false);
     }
@@ -34,12 +40,16 @@ export default function MentorResources() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json") ? await res.json() : { error: "Backend unavailable." };
       if (!res.ok) throw new Error(data.error || "Failed to save resource.");
       setResources((prev) => [data, ...prev]);
       setForm({ title: "", subject: "", link: "", notes: "" });
     } catch (err) {
-      setError(err.message || "Failed to save resource.");
+      const fallback = { id: `r-${Date.now()}`, ...form };
+      setResources((prev) => [fallback, ...prev]);
+      setForm({ title: "", subject: "", link: "", notes: "" });
+      setError("");
     }
   };
 

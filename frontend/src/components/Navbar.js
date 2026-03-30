@@ -8,6 +8,7 @@ const navByRole = {
     { to: "/student/ai-engine", label: "AI Learning" },
     { to: "/student/courses", label: "My Courses" },
     { to: "/student/ai-tutor", label: "AI Tutor" },
+    { to: "/student/assignments", label: "Assignments" },
     { to: "/student/progress", label: "Progress" },
     { to: "/student/mentor", label: "Mentor" },
   ],
@@ -15,10 +16,12 @@ const navByRole = {
     { to: "/mentor/students", label: "Students" },
     { to: "/mentor/resources", label: "Resources" },
     { to: "/mentor/sessions", label: "Sessions" },
+    { to: "/mentor/assignments", label: "Assignments" },
   ],
   ngo: [
     { to: "/ngo/dashboard", label: "Dashboard" },
     { to: "/ngo/matching", label: "Matching" },
+    { to: "/ngo/assignments", label: "Assignments" },
   ],
 };
 
@@ -35,7 +38,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-mist bg-paper/95 backdrop-blur">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-mist/80 bg-paper/85 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-ink text-xs font-bold">
