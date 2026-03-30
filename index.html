@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyaan | AI Study Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-header">
+            <span class="logo">GYAAN</span>
+            <span class="subtitle">AI STUDY PLANNER</span>
+        </div>
+
+        <div class="tab-system">
+            <button id="tab-signin" class="active" onclick="switchTab('signin')">Sign In</button>
+            <button id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+        </div>
+
+        <div id="signin-box">
+            <form id="signin-form">
+                <label class="flbl">Email</label>
+                <input type="email" id="si-email" placeholder="you@example.com" required>
+                
+                <label class="flbl">Password</label>
+                <input type="password" id="si-password" placeholder="••••••••" required>
+                
+                <button type="submit" class="btn-primary">Sign In →</button>
+            </form>
+        </div>
+
+        <div id="signup-box" class="hidden">
+            <form id="signup-form">
+                <label class="flbl">Full Name</label>
+                <input type="text" id="su-name" placeholder="e.g. Chaitanya Kumar" required>
+                
+                <label class="flbl">Email</label>
+                <input type="email" id="su-email" placeholder="you@example.com" required>
+                
+                <label class="flbl">Password</label>
+                <input type="password" id="su-password" placeholder="Min 6 characters" required>
+
+                <label class="flbl">I am a:</label>
+                <select id="su-role">
+                    <option value="student">Student</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="ngo">NGO Admin</option>
+                </select>
+                
+                <button type="submit" class="btn-primary">Create Account →</button>
+            </form>
+        </div>
+
+        <div id="msg-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
