@@ -2,6 +2,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Card from "../components/Card";
 import { useI18n } from "../context/I18nContext";
+import { useAuth } from "../context/AuthContext";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const actions = [
   {
@@ -105,11 +108,18 @@ const leaderboard = [
 
 export default function Home() {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const studentId = user?.email || "demo-student-1";
+
   const [plan, setPlan] = useState(initialPlan);
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [running, setRunning] = useState(false);
   const [monthIndex, setMonthIndex] = useState(0);
   const [showAchievement, setShowAchievement] = useState(false);
+  const [personalGoals, setPersonalGoals] = useState(goals);
+  const [newGoal, setNewGoal] = useState("");
+  const [savingGoal, setSavingGoal] = useState(false);
+  const [goalsError, setGoalsError] = useState("");
 
   useEffect(() => {
     if (!running) return;
@@ -122,6 +132,20 @@ export default function Home() {
   useEffect(() => {
     if (secondsLeft === 0) setRunning(false);
   }, [secondsLeft]);
+
+  useEffect(() => {
+    const loadGoals = async () => {
+      try {
+        const res = await fetch(`${API_URL}/student/goals?studentId=${encodeURIComponent(studentId)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to load goals");
+        if (data.goals && data.goals.length) setPersonalGoals(data.goals);
+      } catch (err) {
+        setGoalsError(err.message || "Failed to load goals");
+      }
+    };
+    loadGoals();
+  }, [studentId]);
 
   const formatTime = (value) => {
     const mins = Math.floor(value / 60);
@@ -138,6 +162,52 @@ export default function Home() {
     for (let day = 1; day <= month.days; day++) cells.push(day);
     return cells;
   }, [month]);
+
+  const addGoal = async () => {
+    const label = newGoal.trim();
+    if (!label) return;
+    setSavingGoal(true);
+    setGoalsError("");
+    try {
+      const res = await fetch(`${API_URL}/student/goals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, label, progress: 0, total: 5 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add goal");
+      setPersonalGoals((g) => [data.goal, ...g]);
+      setNewGoal("");
+    } catch (err) {
+      setGoalsError(err.message || "Failed to add goal");
+    } finally {
+      setSavingGoal(false);
+    }
+  };
+
+  const updateGoal = async (id, patch) => {
+    setPersonalGoals((g) => g.map((goal) => (goal.id === id ? { ...goal, ...patch } : goal)));
+    try {
+      await fetch(`${API_URL}/student/goals/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, ...patch }),
+      });
+    } catch (err) {
+      setGoalsError(err.message || "Failed to update goal");
+    }
+  };
+
+  const removeGoal = async (id) => {
+    setPersonalGoals((g) => g.filter((goal) => goal.id !== id));
+    try {
+      await fetch(`${API_URL}/student/goals/${id}?studentId=${encodeURIComponent(studentId)}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      setGoalsError(err.message || "Failed to remove goal");
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-24 sm:px-6">
@@ -262,15 +332,44 @@ export default function Home() {
         <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">{t("Goals Tracker")}</h3>
           <div className="mt-4 space-y-4 text-sm">
-            {goals.map((goal) => {
+            {personalGoals.map((goal) => {
               const percent = Math.round((goal.progress / goal.total) * 100);
               return (
                 <div key={goal.id} className="rounded-2xl border border-mist px-3 py-3">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{goal.label}</div>
-                    <div className="text-xs text-gray-600">
-                      {goal.progress}/{goal.total}
-                    </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <input
+                      className="w-full flex-1 rounded-2xl border border-mist px-3 py-2 text-sm"
+                      value={goal.label}
+                      onChange={(e) => updateGoal(goal.id, { label: e.target.value })}
+                    />
+                    <button
+                      onClick={() => removeGoal(goal.id)}
+                      className="rounded-2xl border border-mist px-3 py-2 text-xs"
+                    >
+                      {t("Remove")}
+                    </button>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+                    <input
+                      type="number"
+                      min="0"
+                      max={goal.total}
+                      value={goal.progress}
+                      onChange={(e) =>
+                        updateGoal(goal.id, { progress: Number(e.target.value) || 0 })
+                      }
+                      className="w-16 rounded-2xl border border-mist px-2 py-1 text-xs"
+                    />
+                    <span>/</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={goal.total}
+                      onChange={(e) =>
+                        updateGoal(goal.id, { total: Math.max(1, Number(e.target.value) || 1) })
+                      }
+                      className="w-16 rounded-2xl border border-mist px-2 py-1 text-xs"
+                    />
                   </div>
                   <div className="mt-2 h-2 w-full rounded-full bg-mist">
                     <div
@@ -282,6 +381,22 @@ export default function Home() {
               );
             })}
           </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <input
+              className="flex-1 rounded-2xl border border-mist px-3 py-2 text-sm"
+              placeholder={t("Add a new goal")}
+              value={newGoal}
+              onChange={(e) => setNewGoal(e.target.value)}
+            />
+            <button
+              onClick={addGoal}
+              disabled={savingGoal}
+              className="rounded-2xl border border-ink px-4 py-2 text-sm font-medium transition hover:bg-ink hover:text-paper disabled:opacity-60"
+            >
+              {savingGoal ? t("Saving...") : t("Add Goal")}
+            </button>
+          </div>
+          {goalsError && <div className="mt-2 text-xs text-red-600">{goalsError}</div>}
         </div>
 
         <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft">
