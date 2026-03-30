@@ -7,7 +7,7 @@ function switchTab(type) {
     const suBox = document.getElementById('signup-box');
     const siTab = document.getElementById('tab-signin');
     const suTab = document.getElementById('tab-signup');
-
+    // sign in
     if (type === 'signin') {
         siBox.classList.remove('hidden');
         suBox.classList.add('hidden');
