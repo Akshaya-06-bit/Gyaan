@@ -2,7 +2,7 @@ const { db } = require("../config/firebase");
 const Groq = require("groq-sdk");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
+// GET
 // GET /api/dashboard/overview
 const getOverview = async (req, res) => {
   try {
