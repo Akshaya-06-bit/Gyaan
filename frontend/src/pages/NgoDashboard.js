@@ -353,64 +353,33 @@ export default function NgoDashboard() {
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft lg:col-span-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
-            {t("Before vs After Impact")}
-          </h3>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-mist px-4 py-3 text-center">
-              <p className="text-xs uppercase tracking-wide text-gray-600">Before</p>
-              <p className="mt-2 text-xl font-semibold">
-                {impactDelta ? `${impactDelta.first}%` : "--"}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-mist px-4 py-3 text-center">
-              <p className="text-xs uppercase tracking-wide text-gray-600">After</p>
-              <p className="mt-2 text-xl font-semibold">
-                {impactDelta ? `${impactDelta.last}%` : "--"}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-mist px-4 py-3 text-center">
-              <p className="text-xs uppercase tracking-wide text-gray-600">Change</p>
-              <p className="mt-2 text-xl font-semibold">
-                {impactDelta ? `${impactDelta.delta >= 0 ? "+" : ""}${impactDelta.delta}%` : "--"}
-              </p>
-            </div>
+      <div className="mt-8 rounded-2xl border border-mist bg-paper p-5 shadow-soft">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+          {t("Before vs After Impact")}
+        </h3>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-mist px-4 py-3 text-center">
+            <p className="text-xs uppercase tracking-wide text-gray-600">Before</p>
+            <p className="mt-2 text-xl font-semibold">
+              {impactDelta ? `${impactDelta.first}%` : "--"}
+            </p>
           </div>
-          <p className="mt-4 text-sm text-gray-600">
-            Shows improvement in average scores from the first to the latest recorded month.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
-            {t("AI Prompt + Output")}
-          </h3>
-          <div className="mt-3 space-y-3 text-xs text-gray-600">
-            <div>
-              <p className="mb-1 font-semibold text-gray-700">Prompt</p>
-              <pre className="whitespace-pre-wrap rounded-2xl border border-mist bg-paper px-3 py-2 text-[11px] text-gray-700">
-                {insightsPrompt || "No prompt returned."}
-              </pre>
-            </div>
-            <div>
-              <p className="mb-1 font-semibold text-gray-700">JSON Output</p>
-              <pre className="whitespace-pre-wrap rounded-2xl border border-mist bg-paper px-3 py-2 text-[11px] text-gray-700">
-                {JSON.stringify(
-                  {
-                    overview,
-                    weakestSubjects: progress?.weakestSubjects || [],
-                    alerts: alerts?.alerts || [],
-                    insights,
-                  },
-                  null,
-                  2
-                )}
-              </pre>
-            </div>
+          <div className="rounded-2xl border border-mist px-4 py-3 text-center">
+            <p className="text-xs uppercase tracking-wide text-gray-600">After</p>
+            <p className="mt-2 text-xl font-semibold">
+              {impactDelta ? `${impactDelta.last}%` : "--"}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-mist px-4 py-3 text-center">
+            <p className="text-xs uppercase tracking-wide text-gray-600">Change</p>
+            <p className="mt-2 text-xl font-semibold">
+              {impactDelta ? `${impactDelta.delta >= 0 ? "+" : ""}${impactDelta.delta}%` : "--"}
+            </p>
           </div>
         </div>
+        <p className="mt-4 text-sm text-gray-600">
+          Shows improvement in average scores from the first to the latest recorded month.
+        </p>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">

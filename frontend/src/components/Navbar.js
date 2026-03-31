@@ -13,6 +13,7 @@ const navByRole = {
     { to: "/student/mentor", label: "Mentor" },
   ],
   mentor: [
+    { to: "/mentor", label: "Dashboard" },
     { to: "/mentor/students", label: "Students" },
     { to: "/mentor/resources", label: "Resources" },
     { to: "/mentor/sessions", label: "Sessions" },
