@@ -27,5 +27,5 @@ function showView(role) {
     }
 }
 
-// Ensure the page starts at the NGO view
+// Ensure the page starts at the NGO view by default
 window.onload = () => showView('ngo');
