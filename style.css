@@ -14,7 +14,7 @@ body {
     margin: 0;
 }
 
-/* Navigation */
+/* Navigation bar*/
 .navbar {
     background: var(--primary);
     padding: 1rem 2rem;
