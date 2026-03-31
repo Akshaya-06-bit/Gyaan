@@ -1,6 +1,6 @@
 import "./Courses.css";
 
-export default function CourseCard({ course, colors }) {
+export default function CourseCard({ course, colors, onAction }) {
   const { title, thumb, url, subject, level, class: cls, channel, description } = course;
   const bg    = colors?.bg    || "#f0f9ff";
   const color = colors?.color || "#0284c7";
@@ -24,9 +24,7 @@ export default function CourseCard({ course, colors }) {
 
       <div className="course-body">
         <h4 className="course-title">{title}</h4>
-
         {description && <p className="course-desc">{description}</p>}
-
         <div className="course-meta">
           {cls && <span className="meta-chip">🎓 Class {cls}</span>}
           {channel && <span className="meta-chip">📺 {channel}</span>}
@@ -43,6 +41,12 @@ export default function CourseCard({ course, colors }) {
         >
           ▶ Start Learning
         </a>
+
+        <div className="course-ai-actions">
+          <button className="ai-action-btn" onClick={() => onAction("quiz", course)}>🧠 Quiz</button>
+          <button className="ai-action-btn" onClick={() => onAction("structure", course)}>📋 Structure</button>
+          <button className="ai-action-btn" onClick={() => onAction("mindmap", course)}>🗺️ Mind Map</button>
+        </div>
       </div>
     </div>
   );

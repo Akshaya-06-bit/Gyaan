@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useVoiceInteraction } from "../hooks/useVoiceInteraction";
 import { useI18n } from "../context/I18nContext";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import { chatWithTutor as apiChat } from "../services/api";
 
 export default function AiTutor() {
   const { t } = useI18n();
@@ -44,13 +43,7 @@ export default function AiTutor() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/ai/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "AI tutor failed.");
+      const { data } = await apiChat(text);
       setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
       if (isSupported.synthesis) {
         try {

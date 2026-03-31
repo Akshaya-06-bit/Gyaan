@@ -81,4 +81,115 @@ Example format:
   }
 };
 
-module.exports = { suggestCourses };
+// POST /api/courses/quiz
+const generateQuiz = async (req, res) => {
+  const { subject, cls, level, title } = req.body;
+  if (!subject || !cls || !level) return res.status(400).json({ error: "subject, cls, level required" });
+
+  const prompt = `Generate a 5-question multiple choice quiz for an Indian school student.
+Subject: ${subject}, Class: ${cls}, Level: ${level}, Topic: ${title || subject}
+
+Respond ONLY with a valid JSON array. No markdown, no extra text.
+Each object must have:
+- question (string)
+- options (array of 4 strings)
+- answer (string: must exactly match one of the options)
+- explanation (string: one sentence)
+
+Example:
+[{"question":"What is 2+2?","options":["3","4","5","6"],"answer":"4","explanation":"2+2 equals 4."}]`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
+      max_tokens: 1500,
+    });
+    const raw = completion.choices[0]?.message?.content?.trim();
+    const match = raw.match(/\[[\s\S]*\]/);
+    if (!match) return res.status(500).json({ error: "AI returned invalid format." });
+    res.json({ quiz: JSON.parse(match[0]) });
+  } catch (err) {
+    res.status(500).json({ error: "Quiz generation failed: " + err.message });
+  }
+};
+
+// POST /api/courses/structure
+const generateStructure = async (req, res) => {
+  const { subject, cls, level, title } = req.body;
+  if (!subject || !cls || !level) return res.status(400).json({ error: "subject, cls, level required" });
+
+  const prompt = `Create a structured study plan for an Indian school student.
+Subject: ${subject}, Class: ${cls}, Level: ${level}, Topic: ${title || subject}
+
+Respond ONLY with a valid JSON object. No markdown, no extra text.
+Format:
+{
+  "title": "Study Plan title",
+  "duration": "e.g. 4 weeks",
+  "weeks": [
+    {
+      "week": 1,
+      "theme": "week theme",
+      "topics": ["topic1", "topic2"],
+      "goal": "what student will achieve"
+    }
+  ],
+  "tips": ["tip1", "tip2", "tip3"]
+}`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.4,
+      max_tokens: 1500,
+    });
+    const raw = completion.choices[0]?.message?.content?.trim();
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return res.status(500).json({ error: "AI returned invalid format." });
+    res.json({ structure: JSON.parse(match[0]) });
+  } catch (err) {
+    res.status(500).json({ error: "Structure generation failed: " + err.message });
+  }
+};
+
+// POST /api/courses/mindmap
+const generateMindMap = async (req, res) => {
+  const { subject, cls, level, title } = req.body;
+  if (!subject || !cls || !level) return res.status(400).json({ error: "subject, cls, level required" });
+
+  const prompt = `Create a mind map for an Indian school student.
+Subject: ${subject}, Class: ${cls}, Level: ${level}, Topic: ${title || subject}
+
+Respond ONLY with a valid JSON object. No markdown, no extra text.
+Format:
+{
+  "center": "main topic",
+  "branches": [
+    {
+      "label": "branch name",
+      "color": "a hex color",
+      "subtopics": ["subtopic1", "subtopic2", "subtopic3"]
+    }
+  ]
+}`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.4,
+      max_tokens: 1200,
+    });
+    const raw = completion.choices[0]?.message?.content?.trim();
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return res.status(500).json({ error: "AI returned invalid format." });
+    res.json({ mindmap: JSON.parse(match[0]) });
+  } catch (err) {
+    res.status(500).json({ error: "Mind map generation failed: " + err.message });
+  }
+};
+
+module.exports = { suggestCourses, generateQuiz, generateStructure, generateMindMap };

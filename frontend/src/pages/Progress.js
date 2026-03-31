@@ -9,20 +9,25 @@ import {
 
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "../context/I18nContext";
+import { useAuth } from "../context/AuthContext";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 export default function Progress() {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const isStudent = user?.role === "student";
   const [studentId, setStudentId] = useState("");
   const [summary, setSummary] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Map demo student emails to their mock data
   const MOCK_STUDENTS = [
     {
       id: "demo-student-1",
+      email: "student@demo.com",
       name: "Mallik",
       summary: {
         subjectAverages: [
@@ -46,6 +51,7 @@ export default function Progress() {
     },
     {
       id: "demo-student-2",
+      email: "student2@demo.com",
       name: "Gowtham",
       summary: {
         subjectAverages: [
@@ -69,6 +75,7 @@ export default function Progress() {
     },
     {
       id: "demo-student-3",
+      email: "student3@demo.com",
       name: "Aarav",
       summary: {
         subjectAverages: [
@@ -110,7 +117,11 @@ export default function Progress() {
 
 
   useEffect(() => {
-    if (studentId) loadSummary(studentId);
+    if (isStudent) {
+      // Auto-load the logged-in student's own mock data
+      const own = MOCK_STUDENTS.find((s) => s.email === user?.email) || MOCK_STUDENTS[0];
+      applyMock(own);
+    }
   }, []);
 
   const applyMock = (mock) => {
@@ -147,45 +158,53 @@ export default function Progress() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
-            Demo Students
-          </h3>
-          <div className="mt-4 space-y-2">
-            {MOCK_STUDENTS.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => applyMock(s)}
-                className="w-full rounded-2xl border border-mist px-3 py-2 text-left text-sm transition hover:border-ink"
-              >
-                <div className="font-medium">{s.name}</div>
-                <div className="text-xs text-gray-600">{s.id}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft lg:col-span-2">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="flex-1 min-w-[240px]">
-              <label className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Student ID
-              </label>
-              <input
-                className="mt-2 w-full rounded-2xl border border-mist px-4 py-3 text-sm outline-none transition focus:border-ink"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                placeholder="Enter student id"
-              />
+        {!isStudent && (
+          <div className="rounded-2xl border border-mist bg-paper p-5 shadow-soft">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+              Demo Students
+            </h3>
+            <div className="mt-4 space-y-2">
+              {MOCK_STUDENTS.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => applyMock(s)}
+                  className="w-full rounded-2xl border border-mist px-3 py-2 text-left text-sm transition hover:border-ink"
+                >
+                  <div className="font-medium">{s.name}</div>
+                  <div className="text-xs text-gray-600">{s.id}</div>
+                </button>
+              ))}
             </div>
-            <button
-              onClick={() => loadSummary(studentId)}
-              className="rounded-2xl border border-ink px-4 py-3 text-sm font-medium transition hover:bg-ink hover:text-paper"
-              disabled={loading || !studentId}
-            >
-              {loading ? "Loading..." : "Load Progress"}
-            </button>
           </div>
+        )}
+
+        <div className={`rounded-2xl border border-mist bg-paper p-5 shadow-soft ${isStudent ? "lg:col-span-3" : "lg:col-span-2"}`}>
+          {isStudent ? (
+            <p className="text-sm text-gray-600">
+              Showing your progress, <span className="font-medium">{user?.name}</span>.
+            </p>
+          ) : (
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="flex-1 min-w-[240px]">
+                <label className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                  Student ID
+                </label>
+                <input
+                  className="mt-2 w-full rounded-2xl border border-mist px-4 py-3 text-sm outline-none transition focus:border-ink"
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                  placeholder="Enter student id"
+                />
+              </div>
+              <button
+                onClick={() => loadSummary(studentId)}
+                className="rounded-2xl border border-ink px-4 py-3 text-sm font-medium transition hover:bg-ink hover:text-paper"
+                disabled={loading || !studentId}
+              >
+                {loading ? "Loading..." : "Load Progress"}
+              </button>
+            </div>
+          )}
           {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
         </div>
       </div>
